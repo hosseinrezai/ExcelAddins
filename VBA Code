@@ -1,0 +1,26 @@
+Sub RewrapWithRoundN()
+    Dim c           As Range
+    Dim f           As String
+    Dim innerExpr   As String
+    Dim posComma    As Long
+    Dim numDigits   As Long
+    Dim response    As Variant
+    Const ROUND_LEN As Long = 6   
+    response = Application.InputBox(Prompt:="Round(... ,?):", Title:="RewrapWithRoundN", Default:=2, Type:=1)        
+    If response = False Then Exit Sub
+    numDigits = CLng(response)
+    For Each c In Selection
+        If c.HasFormula Then
+            f = c.Formula  
+            If LCase(Mid(f, 2, ROUND_LEN)) = "round(" Then
+                posComma = InStrRev(f, ",")
+                innerExpr = Mid(f, 2 + ROUND_LEN, posComma - (2 + ROUND_LEN))
+            Else
+                innerExpr = Mid(f, 2)
+            End If
+            c.Formula = "=ROUND(" & innerExpr & "," & numDigits & ")"
+        End If
+    Next c
+End Sub
+
+
