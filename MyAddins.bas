@@ -1,0 +1,118 @@
+Attribute VB_Name = "Module1"
+Sub setRowWidth()
+    c = InputBox("Col Name:")
+    i = 1
+    emptycounter = 0
+    Do While emptycounter < 100
+        If Len(ActiveSheet.Range(c & i).Value) = 0 Then
+            emptycounter = emptycounter + 1
+        Else
+            emptycounter = 0
+            ActiveSheet.Range(c & i).Select
+            n = InputBox("input Lines Number :")
+            If n < 0 Then
+                Exit Do
+            ElseIf n > 0 Then
+                ActiveSheet.Rows(i).RowHeight = n * 22
+            End If
+        End If
+        
+        i = i + 1
+    Loop
+End Sub
+Function EzafeDaText(A As Double, d As Double)
+    res = ""
+    i = 1
+    If d > 2 Then
+        While d > 2
+        d = d - 2
+        res = res & "(" & A & ChrW(215) & Application.WorksheetFunction.Round(Application.WorksheetFunction.Min(2, d), 2) & ChrW(215) & i & ") +"
+        i = i + 1
+        Wend
+        res = Application.WorksheetFunction.Substitute(res & "..", "+..", "")
+    End If
+    EzafeDaText = res
+End Function
+Function EzafeDaValue(A As Double, d As Double)
+    resval = 0
+    i = 1
+    If d > 2 Then
+        While d > 2
+        d = d - 2
+        resval = resval + i * A * Application.WorksheetFunction.Min(2, d)
+        i = i + 1
+        Wend
+    End If
+    EzafeDaValue = resval
+End Function
+Function EzafeMaText(A As Double, d As Double)
+    res = ""
+    i = 1
+    If d > 2 Then
+        d = d - 1
+        While d > 1
+        d = d - 1
+        res = res & "(" & A & ChrW(215) & Application.WorksheetFunction.Round(Application.WorksheetFunction.Min(1, d), 2) & ChrW(215) & i & ") +"
+        i = i + 1
+        Wend
+        res = Application.WorksheetFunction.Substitute(res & "..", "+..", "")
+    End If
+    EzafeMaText = res
+End Function
+Function EzafeMaValue(A As Double, d As Double)
+    resval = 0
+    i = 1
+    If d > 2 Then
+        d = d - 1
+        While d > 1
+        d = d - 1
+        resval = resval + i * A * Application.WorksheetFunction.Min(1, d)
+        i = i + 1
+        Wend
+    End If
+    EzafeMaValue = resval
+End Function
+Sub RewrapWithRoundN()
+    Dim c           As Range
+    Dim f           As String
+    Dim innerExpr   As String
+    Dim posComma    As Long
+    Dim numDigits   As Long
+    Dim response    As Variant
+    Const ROUND_LEN As Long = 6   ' ??? "ROUND("
+
+    ' ????? ????? ???? ?????? ????? ?????
+    response = Application.InputBox( _
+                   Prompt:="Round(... ,?):", _
+                   Title:="RewrapWithRoundN", _
+                   Default:=2, _
+                   Type:=1)          ' Type 1 = ????
+
+    ' ??? ????? ??? ???? ???? ??
+    If response = False Then Exit Sub
+
+    numDigits = CLng(response)
+
+    ' ???? ???? ?? ???? ??????????
+    For Each c In Selection
+        If c.HasFormula Then
+            f = c.Formula  ' ??? "=A1/B1" ?? "=ROUND(A1,3)"
+
+            ' ??? ?? ??? ROUND( ????
+            If LCase(Mid(f, 2, ROUND_LEN)) = "round(" Then
+                posComma = InStrRev(f, ",")
+                innerExpr = Mid(f, 2 + ROUND_LEN, posComma - (2 + ROUND_LEN))
+            Else
+                ' ??? ROUND ?????? ????? ????? ???? "="
+                innerExpr = Mid(f, 2)
+            End If
+
+            ' ????? ???? ????? ?? ??? ????? ?????
+            c.Formula = "=ROUND(" & innerExpr & "," & numDigits & ")"
+        End If
+    Next c
+End Sub
+
+
+
+
