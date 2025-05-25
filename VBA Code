@@ -1,10 +1,31 @@
+Sub setRowWidth()
+    c = InputBox("Col Name:")
+    i = 1
+    emptycounter = 0
+    Do While emptycounter < 100
+        If Len(ActiveSheet.Range(c & i).Value) = 0 Then
+            emptycounter = emptycounter + 1
+        Else
+            emptycounter = 0
+            ActiveSheet.Range(c & i).Select
+            n = InputBox("input Lines Number :")
+            If n < 0 Then
+                Exit Do
+            ElseIf n > 0 Then
+                ActiveSheet.Rows(i).RowHeight = n * 22
+            End If
+        End If
+        
+        i = i + 1
+    Loop
+End Sub
 Function EzafeDaText(A As Double, d As Double)
     res = ""
     i = 1
     If d > 2 Then
         While d > 2
         d = d - 2
-        res = res & "(" & A & ChrW(215) & Application.WorksheetFunction.Min(2, d) & ChrW(215) & i & ") +"
+        res = res & "(" & A & ChrW(215) & Application.WorksheetFunction.Round(Application.WorksheetFunction.Min(2, d), 2) & ChrW(215) & i & ") +"
         i = i + 1
         Wend
         res = Application.WorksheetFunction.Substitute(res & "..", "+..", "")
@@ -30,7 +51,7 @@ Function EzafeMaText(A As Double, d As Double)
         d = d - 1
         While d > 1
         d = d - 1
-        res = res & "(" & A & ChrW(215) & Application.WorksheetFunction.Min(1, d) & ChrW(215) & i & ") +"
+        res = res & "(" & A & ChrW(215) & Application.WorksheetFunction.Round(Application.WorksheetFunction.Min(1, d), 2) & ChrW(215) & i & ") +"
         i = i + 1
         Wend
         res = Application.WorksheetFunction.Substitute(res & "..", "+..", "")
@@ -90,3 +111,7 @@ Sub RewrapWithRoundN()
         End If
     Next c
 End Sub
+
+
+
+
